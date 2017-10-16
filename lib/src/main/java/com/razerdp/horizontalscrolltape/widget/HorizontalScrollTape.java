@@ -175,7 +175,7 @@ public class HorizontalScrollTape extends View implements HorizontalScrollTapeCo
 
         //顶部的线
         canvas.drawLine(0, 0, canvasWidth, 0, linePaint);
-        //画线（边缘可能有透明渐变）
+        //画线（边缘可设置透明渐变）
         /**@see HorizontalScrollTapeConfig#alphaSide*/
         for (int i = 0; i < showLineCount; i++) {
             boolean isLong = (i + deltaX) % 10 == 0;
@@ -196,6 +196,7 @@ public class HorizontalScrollTape extends View implements HorizontalScrollTapeCo
                 canvas.drawText(num, left, bottom + mConfig.getTextTopMargin(), textPaint);
             }
         }
+        //中间的指针
         canvas.drawLine(canvasWidth / 2, 0, canvasWidth / 2, mConfig.getMiddleLineHeight(), middleLinePaint);
     }
 
