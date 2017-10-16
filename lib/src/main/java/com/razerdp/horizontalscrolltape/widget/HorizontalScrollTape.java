@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Scroller;
@@ -36,6 +37,7 @@ public class HorizontalScrollTape extends View {
     private boolean isScrolling;
 
     private Scroller mScroller;
+    private GestureDetector mGestureDetector;
 
 
     public HorizontalScrollTape(Context context) {
@@ -54,6 +56,8 @@ public class HorizontalScrollTape extends View {
     private void initView(Context context) {
         if (mConfig == null) mConfig = new HorizontalScrollTapeConfig();
         mScroller = new Scroller(context);
+        mGestureDetector = new GestureDetector(context, mSimpleOnGestureListener);
+        mGestureDetector.setIsLongpressEnabled(false);
         initPaint();
         applyConfig();
     }
@@ -92,27 +96,21 @@ public class HorizontalScrollTape extends View {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        float x = event.getX();
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                lastTouchPos = x;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                float xDistance = lastTouchPos - x;
-                if (xDistance != 0) {
-                    if (!isScrolling) {
-                        isScrolling = true;
-                        callScrollStart();
-                    }
-                    onScrollingEvent(x, xDistance);
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                isScrolling = false;
-                callScrollStop();
-                break;
+    public void computeScroll() {
+        if (mScroller.computeScrollOffset()) {
+            float curX = mScroller.getCurrX();
+            float distanceX = lastTouchPos - curX;
+            Log.i(TAG, "curx = " + curX + "  distance = " + distanceX);
+            onScrollingEvent(curX, distanceX);
+        } else {
+            isScrolling = false;
+            callScrollStop();
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        mGestureDetector.onTouchEvent(event);
         return true;
     }
 
@@ -121,6 +119,38 @@ public class HorizontalScrollTape extends View {
         postInvalidate();
         lastTouchPos = curX;
     }
+
+    private GestureDetector.SimpleOnGestureListener mSimpleOnGestureListener = new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            if (!mScroller.isFinished() || mScroller.computeScrollOffset()) {
+                mScroller.abortAnimation();
+                isScrolling = false;
+            }
+            lastTouchPos = e1.getX();
+            if (distanceX != 0) {
+                if (!isScrolling) {
+                    isScrolling = true;
+                    callScrollStart();
+                }
+                onScrollingEvent(e2.getX(), distanceX);
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            mScroller.fling((int) e1.getX(),
+                            0,
+                            (int) (velocityX),
+                            0,
+                            Integer.MIN_VALUE,
+                            Integer.MAX_VALUE,
+                            0,
+                            0);
+            return true;
+        }
+    };
 
 
     @Override
@@ -137,7 +167,6 @@ public class HorizontalScrollTape extends View {
         int showLineCount = canvasWidth / (mConfig.getLineWidth() + mConfig.getLineMargin());
         //计算移动了多少格
         int deltaX = (int) (scrollDistance / (float) (mConfig.getLineWidth() + mConfig.getLineMargin()));
-        Log.i(TAG, "" + deltaX);
 
         //顶部的线
         canvas.drawLine(0, 0, canvasWidth, 0, linePaint);
