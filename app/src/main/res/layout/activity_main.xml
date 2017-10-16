@@ -8,6 +8,7 @@
     tools:context="com.razerdp.horizontalscrolltape.MainActivity">
 
     <com.razerdp.horizontalscrolltape.widget.HorizontalScrollTape
+        android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="150dp"/>
 

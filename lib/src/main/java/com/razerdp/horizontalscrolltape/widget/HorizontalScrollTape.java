@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.widget.Scroller;
 
 import com.razerdp.horizontalscrolltape.widget.config.HorizontalScrollTapeConfig;
+import com.razerdp.horizontalscrolltape.widget.interfaces.HorizontalScrollTapeController;
+import com.razerdp.horizontalscrolltape.widget.interfaces.OnScrollingListener;
 
 /**
  * Created by 大灯泡 on 2017/10/16.
@@ -20,7 +23,7 @@ import com.razerdp.horizontalscrolltape.widget.config.HorizontalScrollTapeConfig
  * 水平滑动卷尺
  */
 
-public class HorizontalScrollTape extends View {
+public class HorizontalScrollTape extends View implements HorizontalScrollTapeController {
     private static final String TAG = "HorizontalScrollTape";
 
     private HorizontalScrollTapeConfig mConfig;
@@ -126,6 +129,7 @@ public class HorizontalScrollTape extends View {
             if (!mScroller.isFinished() || mScroller.computeScrollOffset()) {
                 mScroller.abortAnimation();
                 isScrolling = false;
+                callScrollStop();
             }
             lastTouchPos = e1.getX();
             if (distanceX != 0) {
@@ -140,6 +144,7 @@ public class HorizontalScrollTape extends View {
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            lastTouchPos = e1.getX();
             mScroller.fling((int) e1.getX(),
                             0,
                             (int) (velocityX),
@@ -230,5 +235,204 @@ public class HorizontalScrollTape extends View {
             mConfig.getOnScrollingListener().onStop();
         }
     }
+
+    //-----------------------------------------getter/setter-----------------------------------------
+
+
+    @Override
+    public int getLineWidth() {
+        return mConfig.getLineWidth();
+    }
+
+    @Override
+    public HorizontalScrollTapeConfig setLineWidth(int lineWidth) {
+        hasConfigChanged = true;
+        return mConfig.setLineWidth(lineWidth);
+    }
+
+    @Override
+    public int getMiddleLineWidth() {
+        return mConfig.getMiddleLineWidth();
+    }
+
+    @Override
+    public HorizontalScrollTapeConfig setMiddleLineWidth(int middleLineWidth) {
+        hasConfigChanged = true;
+        return mConfig.setMiddleLineWidth(middleLineWidth);
+    }
+
+    @Override
+    public int getLineColor() {
+        return mConfig.getLineColor();
+    }
+
+    @Override
+    public HorizontalScrollTapeConfig setLineColor(int lineColor) {
+        hasConfigChanged = true;
+        return mConfig.setLineColor(lineColor);
+    }
+
+    @Override
+    public int getMiddleLineColor() {
+        return mConfig.getMiddleLineColor();
+    }
+
+    @Override
+    public HorizontalScrollTapeConfig setMiddleLineColor(int middleLineColor) {
+        hasConfigChanged = true;
+        return mConfig.setMiddleLineColor(middleLineColor);
+    }
+
+    @Override
+    public int getLineMargin() {
+        return mConfig.getLineMargin();
+    }
+
+    @Override
+    public HorizontalScrollTapeConfig setLineMargin(int lineMargin) {
+        hasConfigChanged = true;
+        return mConfig.setLineMargin(lineMargin);
+    }
+
+    @Override
+    public boolean isAlphaSide() {
+        return mConfig.isAlphaSide();
+    }
+
+    @Override
+    public HorizontalScrollTapeConfig setAlphaSide(boolean alphaSide) {
+        hasConfigChanged = true;
+        return mConfig.setAlphaSide(alphaSide);
+    }
+
+    @Override
+    public boolean isAutoAlign() {
+        return mConfig.isAutoAlign();
+    }
+
+    @Override
+    public HorizontalScrollTapeConfig setAutoAlign(boolean autoAlign) {
+        hasConfigChanged = true;
+        return mConfig.setAutoAlign(autoAlign);
+    }
+
+    @Override
+    public int getLineHeight() {
+        return mConfig.getLineHeight();
+    }
+
+    @Override
+    public HorizontalScrollTapeConfig setLineHeight(int lineHeight) {
+        hasConfigChanged = true;
+        return mConfig.setLineHeight(lineHeight);
+    }
+
+    @Override
+    public int getLongLineHeight() {
+        return mConfig.getLongLineHeight();
+    }
+
+    @Override
+    public HorizontalScrollTapeConfig setLongLineHeight(int longLineHeight) {
+        hasConfigChanged = true;
+        return mConfig.setLongLineHeight(longLineHeight);
+    }
+
+    @Override
+    public int getMiddleLineHeight() {
+        return mConfig.getMiddleLineHeight();
+    }
+
+    @Override
+    public HorizontalScrollTapeConfig setMiddleLineHeight(int middleLineHeight) {
+        hasConfigChanged = true;
+        return mConfig.setMiddleLineHeight(middleLineHeight);
+    }
+
+    @Override
+    public OnScrollingListener getOnScrollingListener() {
+        return mConfig.getOnScrollingListener();
+    }
+
+    @Override
+    public HorizontalScrollTapeConfig setOnScrollingListener(OnScrollingListener listener) {
+        return mConfig.setOnScrollingListener(listener);
+    }
+
+    @Override
+    public int getMaxValue() {
+        return mConfig.getMaxValue();
+    }
+
+    @Override
+    public HorizontalScrollTapeConfig setMaxValue(int maxValue) {
+        return mConfig.setMaxValue(maxValue);
+    }
+
+    @Override
+    public int getMinValue() {
+        return mConfig.getMinValue();
+    }
+
+    @Override
+    public HorizontalScrollTapeConfig setMinValue(int minValue) {
+        return mConfig.setMinValue(minValue);
+    }
+
+    @Override
+    public int getTextSize() {
+        return mConfig.getTextSize();
+    }
+
+    @Override
+    public HorizontalScrollTapeConfig setTextSize(int textSize) {
+        hasConfigChanged = true;
+        return mConfig.setTextSize(textSize);
+    }
+
+    @Override
+    public int getTextColor() {
+        return mConfig.getTextColor();
+    }
+
+    @Override
+    public HorizontalScrollTapeConfig setTextColor(int color) {
+        hasConfigChanged = true;
+        return mConfig.setTextColor(color);
+    }
+
+    @Override
+    public int getTextTopMargin() {
+        return mConfig.getTextTopMargin();
+    }
+
+    @Override
+    public HorizontalScrollTapeConfig setTextTopMargin(int topMargin) {
+        hasConfigChanged = true;
+        return mConfig.setTextTopMargin(topMargin);
+    }
+
+    @Override
+    public int getLongLineWidth() {
+        return mConfig.getLongLineWidth();
+    }
+
+    @Override
+    public HorizontalScrollTapeConfig setLongLineWidth(int longLineWidth) {
+        hasConfigChanged = true;
+        return mConfig.setLongLineWidth(longLineWidth);
+    }
+
+    public void setConfig(@NonNull HorizontalScrollTapeConfig config) {
+        if (config == null) return;
+        this.mConfig = config;
+        hasConfigChanged = true;
+    }
+
+    @NonNull
+    public HorizontalScrollTapeConfig getConfig() {
+        return mConfig;
+    }
+
 
 }
